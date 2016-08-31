@@ -9,6 +9,7 @@ import           Text.Metadata
 import           Control.Monad.State.Strict
 import           Data.Monoid
 import           Text.Novel.Structure
+import           Text.Novel.Ogmarkup
 
 type Builder = StateT String IO
 
@@ -35,7 +36,7 @@ instance Novelify Document where
     novelify (Document path) = do
       f <- liftIO $ readFile path
       case parseMetadata path f of
-        Right (metadata, txt) -> append txt
+        Right (metadata, txt) -> append $ parseDoc txt
         Left _                -> append $ "error while parsing " ++ path
 
 instance Novelify Chapter where
@@ -57,6 +58,8 @@ instance Novelify Novel where
     novelify n = do
       appendLn "\\documentclass{book}"
       appendLn "\\usepackage[french]{babel}"
+      appendLn "\\usepackage[T1]{fontenc}"
+      appendLn "\\usepackage[utf8]{inputenc}"
       appendLn "\\begin{document}"
       novelify $ manuscript n
       append "\\end{document}"

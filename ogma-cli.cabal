@@ -18,6 +18,7 @@ library
   exposed-modules:     Text.Metadata
                      , Text.Novel.Structure
                      , Text.Novel
+                     , Text.Novel.Ogmarkup
   build-depends:       base >= 4.7 && < 5
                      , yaml
                      , ogmarkup >= 2.1 && < 3
