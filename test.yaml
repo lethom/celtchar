@@ -1,0 +1,6 @@
+manuscript:
+- title: "Test"
+  chapters:
+  - title: "Test2"
+    documents:
+    - test.up

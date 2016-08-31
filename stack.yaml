@@ -1,0 +1,8 @@
+resolver: nightly-2016-07-29
+
+packages:
+- '.'
+extra-deps:
+  - ogmarkup-2.2
+flags: {}
+extra-package-dbs: []
