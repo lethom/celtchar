@@ -1,0 +1,13 @@
+\usepackage{etoolbox}
+
+\newtoggle{thought}
+
+\newcommand{\dialogue}{\togglefalse{thought}}
+\newcommand{\thought}{\toggletrue{thought}}
+\newcommand{\reply}[1]{%
+  \iftoggle{thought}{%
+    \textit{#1}
+  }{%
+    #1%
+  }%
+}

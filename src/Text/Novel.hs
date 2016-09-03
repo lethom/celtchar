@@ -56,10 +56,13 @@ instance Novelify Manuscript where
 
 instance Novelify Novel where
     novelify n = do
-      appendLn "\\documentclass{book}"
+      appendLn "\\documentclass[b5paper,12pt]{memoir}"
       appendLn "\\usepackage[french]{babel}"
       appendLn "\\usepackage[T1]{fontenc}"
       appendLn "\\usepackage[utf8]{inputenc}"
+      appendLn "\\usepackage[urw-garamond]{mathdesign}"
+      appendLn "\\usepackage{ogma}"
+      appendLn "\\sloppy"
       appendLn "\\begin{document}"
       novelify $ manuscript n
       append "\\end{document}"

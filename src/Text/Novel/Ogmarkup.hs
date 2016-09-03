@@ -24,6 +24,10 @@ instance GenConf NovConf String where
 
     paragraphTemplate _ = (++ emptyLine)
 
+    dialogueTemplate _ _ txt = "\\dialogue{}" ++ txt
+    thoughtTemplate _ _ txt = "\\thought{}" ++ txt
+    replyTemplate _ txt = "\\reply{" ++ txt ++ "}"
+
     strongEmphTemplate _ txt = "\\textbf{" ++ txt ++ "}"
     emphTemplate _ txt = "\\textit{" ++ txt ++ "}"
 
