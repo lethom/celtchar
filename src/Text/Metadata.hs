@@ -10,10 +10,12 @@ parseMetadata :: String -> String -> Either ParseError (String, String)
 parseMetadata = runParser (do
     spaces
     many1 $ char '-'
+    char '\n'
     spaces
     metadata <- manyTill anyToken
-                         (do char '\n'
-                             many1 $ char '-')
+                         (try $ do char '\n'
+                                   many1 $ char '-'
+                                   char '\n')
     spaces
     text <- manyTill anyToken eof
     return (metadata, text))
