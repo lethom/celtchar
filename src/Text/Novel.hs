@@ -63,6 +63,9 @@ instance Novelify Novel where
       appendLn "\\usepackage[urw-garamond]{mathdesign}"
       appendLn "\\usepackage{ogma}"
       appendLn "\\sloppy"
+      appendLn $ "\\title{" ++ novelTitle n ++ "}"
+      appendLn $ "\\author{" ++ author n ++ "}"
       appendLn "\\begin{document}"
+      appendLn "\\maketitle"
       novelify $ manuscript n
       append "\\end{document}"

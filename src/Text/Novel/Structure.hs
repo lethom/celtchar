@@ -36,9 +36,14 @@ data Manuscript = Manuscript [Part]
 instance FromJSON Manuscript where
     parseJSON v = Manuscript <$> parseJSON v
 
-data Novel = Novel { manuscript :: Manuscript }
+data Novel = Novel { author :: String
+                   , novelTitle :: String
+                   , manuscript :: Manuscript }
   deriving (Generic, Show)
-instance FromJSON Novel
+instance FromJSON Novel where
+    parseJSON (Object v) = Novel <$> v .: "author"
+                                 <*> v .: "title"
+                                 <*> v .: "manuscript"
 
 getNovelStructure :: FilePath -> IO (Maybe Novel)
 getNovelStructure = decodeFile

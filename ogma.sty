@@ -1,4 +1,6 @@
 \usepackage{etoolbox}
+\usepackage{xcolor}
+\usepackage{afterpage}
 
 \newtoggle{thought}
 
@@ -11,3 +13,20 @@
     #1%
   }%
 }
+
+\makeatletter
+\def\@maketitle{%
+  \newpage
+  \color{white}
+  \pagecolor{black}\afterpage{\nopagecolor}
+  \begin{center}
+    \fontsize{50}{60}\selectfont \textsc{\@title}
+  \end{center}
+  \vfill
+  \begin{center}
+    \large
+    \@author
+  \end{center}
+  \newpage
+  }
+\makeatother

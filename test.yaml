@@ -1,7 +1,9 @@
+author: lethom
+title: "Foobar"
 manuscript:
-- title: "Test"
+- title: "foo"
   chapters:
-  - title: "Test2"
+  - title: "Bar"
     documents:
     - test.up
     - lorem.up
