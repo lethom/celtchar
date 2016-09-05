@@ -8,6 +8,7 @@ module Text.Novel where
 import           Text.Metadata
 import           Control.Monad.State.Strict
 import           Data.Monoid
+import           Data.Maybe
 import           Text.Novel.Structure
 import           Text.Novel.Ogmarkup
 
@@ -41,7 +42,7 @@ instance Novelify Document where
 
 instance Novelify Chapter where
     novelify c = do
-      appendLn $ "\\chapter{" ++ chapterTitle c ++ "}"
+      appendLn $ "\\chapter{" ++ (maybe "" id $ chapterTitle c) ++ "}"
       novelify $ documents c
 
 instance Novelify Part where

@@ -14,12 +14,12 @@ data Document = Document FilePath
 instance FromJSON Document where
     parseJSON v = Document <$> parseJSON v
 
-data Chapter = Chapter { chapterTitle :: String
+data Chapter = Chapter { chapterTitle :: Maybe String
                        , documents    :: [Document]
                        }
   deriving (Generic, Show)
 instance FromJSON Chapter where
-    parseJSON (Object v) = Chapter <$> v .: "title"
+    parseJSON (Object v) = Chapter <$> v .:? "title"
                                    <*> v .: "documents"
 
 data Part = Part { partTitle :: String
