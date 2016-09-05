@@ -1,6 +1,7 @@
 \usepackage{etoolbox}
 \usepackage{xcolor}
 \usepackage{afterpage}
+\usepackage{xspace}
 
 \newtoggle{thought}
 
@@ -8,9 +9,9 @@
 \newcommand{\thought}{\toggletrue{thought}}
 \newcommand{\reply}[1]{%
   \iftoggle{thought}{%
-    \textit{#1}
+    \textit{#1}\xspace%
   }{%
-    #1%
+    #1\xspace%
   }%
 }
 
