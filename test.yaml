@@ -7,3 +7,8 @@ manuscript:
     documents:
     - test.up
     - lorem.up
+  - title: "Ext"
+    documents:
+    - test.tex
+    - test.txt
+    - test.md

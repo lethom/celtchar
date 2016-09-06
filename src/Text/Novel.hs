@@ -11,6 +11,11 @@ import           Data.Monoid
 import           Data.Maybe
 import           Text.Novel.Structure
 import           Text.Novel.Ogmarkup
+import           System.FilePath
+import           Text.Pandoc.Readers.Markdown
+import           Text.Pandoc.Writers.LaTeX
+import           Text.Pandoc.Options
+import           Data.Default
 
 type Builder = StateT String IO
 
@@ -37,8 +42,12 @@ instance Novelify Document where
     novelify (Document path) = do
       f <- liftIO $ readFile path
       case parseMetadata path f of
-        Right (metadata, txt) -> append $ parseDoc txt
-        Left _                -> append $ "error while parsing " ++ path
+        Right (metadata, txt) -> appendLn $ case takeExtension path of
+                                              ".up"  -> parseDoc txt
+                                              ".tex" -> txt
+                                              ".md"  -> parseMd f txt
+                                              _      -> "\\begin{verbatim}\n" ++ txt ++ "\n\\end{verbatim}\n"
+        Left _                -> appendLn $ "error while parsing " ++ path
 
 instance Novelify Chapter where
     novelify c = do
@@ -70,3 +79,12 @@ instance Novelify Novel where
       appendLn "\\maketitle"
       novelify $ manuscript n
       append "\\end{document}"
+
+parseMd :: String -> String -> String
+parseMd file txt = case readMarkdown ropts txt of Right pdc -> writeLaTeX wopts pdc
+                                                  Left _    -> "error while compiling " ++ file
+    where ropts :: ReaderOptions
+          ropts = def
+
+          wopts :: WriterOptions
+          wopts = def

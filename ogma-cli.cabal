@@ -23,6 +23,9 @@ library
                      , yaml
                      , ogmarkup >= 2.1 && < 3
                      , mtl
+                     , filepath
+                     , pandoc
+                     , data-default
                      , parsec
   default-language:    Haskell2010
 
