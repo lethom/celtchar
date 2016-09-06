@@ -1,4 +1,4 @@
-module Text.Metadata
+module Celtchar.Metadata
   ( parseMetadata
   ) where
 

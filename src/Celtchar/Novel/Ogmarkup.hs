@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Text.Novel.Ogmarkup where
+module Celtchar.Novel.Ogmarkup where
 
 import Text.Ogmarkup
 

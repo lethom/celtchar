@@ -3,19 +3,20 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 
-module Text.Novel where
+module Celtchar.Novel where
 
-import           Text.Metadata
 import           Control.Monad.State.Strict
-import           Data.Monoid
+import           Data.Default
 import           Data.Maybe
-import           Text.Novel.Structure
-import           Text.Novel.Ogmarkup
+import           Data.Monoid
 import           System.FilePath
+import           Text.Pandoc.Options
 import           Text.Pandoc.Readers.Markdown
 import           Text.Pandoc.Writers.LaTeX
-import           Text.Pandoc.Options
-import           Data.Default
+
+import           Celtchar.Metadata
+import           Celtchar.Novel.Ogmarkup
+import           Celtchar.Novel.Structure
 
 type Builder = StateT String IO
 

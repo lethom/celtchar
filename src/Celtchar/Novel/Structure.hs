@@ -3,7 +3,7 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 
-module Text.Novel.Structure where
+module Celtchar.Novel.Structure where
 
 import Data.Yaml
 import GHC.Generics

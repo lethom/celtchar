@@ -6,8 +6,9 @@
 module Main where
 
 import Options.Generic
-import Text.Novel.Structure
-import Text.Novel
+
+import Celtchar.Novel.Structure
+import Celtchar.Novel
 
 data Command =
     Command { root :: FilePath }
