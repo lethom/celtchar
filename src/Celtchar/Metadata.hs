@@ -1,27 +1,29 @@
+{-# LANGUAGE TypeFamilies #-}
+
 module Celtchar.Metadata
   ( parseMetadata
   ) where
 
-import Text.ParserCombinators.Parsec hiding (parse)
+import Text.Megaparsec
+import Data.String
 
-type MetadataParser = GenParser Char ()
-
-parseMetadata :: String -> String -> Either ParseError (Maybe String, String)
+parseMetadata :: (Stream a, Token a ~ Char, IsString b)
+              => String
+              -> a
+              -> Either (ParseError Char Dec) (Maybe b, b)
 parseMetadata = runParser (do
-    metadata <- (try parseMetadata) <|> (return Nothing)
-    text <- manyTill anyToken eof
-    return (metadata, text))
-                          ()
+    metadata <- (try metadata) <|> (return Nothing)
+    text <- manyTill anyChar eof
+    return (metadata, fromString text))
 
   where
-    parseMetadata = do
-      spaces
-      many1 $ char '-'
+    metadata = do
+      space
+      some $ char '-'
       char '\n'
-      spaces
-      metadata <- manyTill anyToken
-                           (try $ do char '\n'
-                                     many1 $ char '-'
-                                     char '\n')
-      spaces
-      return $ Just metadata
+      space
+      m <- manyTill anyChar (try $ do char '\n'
+                                      some $ char '-'
+                                      char '\n')
+      space
+      return $ Just $ fromString m

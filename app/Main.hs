@@ -6,6 +6,7 @@
 module Main where
 
 import Options.Generic
+import Data.Text (unpack)
 
 import Celtchar.Novel.Structure
 import Celtchar.Novel
@@ -22,5 +23,5 @@ main = do
 
     f <- getNovelStructure $ root cmd
     case f of Just x  -> do res <- stringify (novelify x)
-                            putStrLn res
+                            putStrLn $ unpack res
               Nothing -> putStrLn "error while parsing"

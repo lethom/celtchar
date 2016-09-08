@@ -2,33 +2,39 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Celtchar.Novel where
 
 import           Control.Monad.State.Strict
 import           Data.Default
+import           Data.String
 import           Data.Maybe
+import           Data.Text (Text, pack, unpack)
+import qualified Data.Text.IO as T
 import           Data.Monoid
 import           System.FilePath
 import           Text.Pandoc.Options
 import           Text.Pandoc.Readers.Markdown
 import           Text.Pandoc.Writers.LaTeX
+import           Text.Shakespeare.Text
 
 import           Celtchar.Metadata
 import           Celtchar.Novel.Ogmarkup
 import           Celtchar.Novel.Structure
 
-type Builder = StateT String IO
+type Builder = StateT Text IO
 
-append :: String -> Builder ()
+append :: Text -> Builder ()
 append str = do st <- get
                 put (st `mappend` str)
 
-appendLn :: String -> Builder ()
+appendLn :: Text -> Builder ()
 appendLn str = do append str
                   append "\n"
 
-stringify :: Builder () -> IO String
+stringify :: Builder () -> IO Text
 stringify builder = execStateT builder ""
 
 class Novelify a where
@@ -41,23 +47,27 @@ instance (Novelify a) => Novelify [a] where
 
 instance Novelify Document where
     novelify (Document path) = do
-      f <- liftIO $ readFile path
+      f <- liftIO $ T.readFile path
       case parseMetadata path f of
-        Right (metadata, txt) -> appendLn $ case takeExtension path of
-                                              ".up"  -> parseDoc txt
-                                              ".tex" -> txt
-                                              ".md"  -> parseMd f txt
-                                              _      -> "\\begin{verbatim}\n" ++ txt ++ "\n\\end{verbatim}\n"
-        Left _                -> appendLn $ "error while parsing " ++ path
+        Right (metadata :: Maybe Text, txt) -> appendLn $ case takeExtension path of
+                                                            ".up"  -> parseDoc txt
+                                                            ".tex" -> txt
+                                                            ".md"  -> parseMd f txt
+                                                            _      -> verbatim txt
+        Left _                -> appendLn $ "error while parsing " `mappend` (fromString path :: Text)
+      where
+        verbatim txt = [st|\begin{verbatim}
+#{txt}
+\end{verbatim}|]
 
 instance Novelify Chapter where
     novelify c = do
-      appendLn $ "\\chapter{" ++ (maybe "" id $ chapterTitle c) ++ "}"
+      appendLn $ [st|\chapter{#{maybe "" id $ chapterTitle c}}|]
       novelify $ documents c
 
 instance Novelify Part where
     novelify p = do
-      appendLn $ "\\part{" ++ partTitle p ++ "}"
+      appendLn $ [st|\part{#{partTitle p}}|]
       novelify $ chapters p
 
 instance Novelify Manuscript where
@@ -67,23 +77,25 @@ instance Novelify Manuscript where
 
 instance Novelify Novel where
     novelify n = do
-      appendLn "\\documentclass[b5paper,12pt]{memoir}"
-      appendLn "\\usepackage[french]{babel}"
-      appendLn "\\usepackage[T1]{fontenc}"
-      appendLn "\\usepackage[utf8]{inputenc}"
-      appendLn "\\usepackage[urw-garamond]{mathdesign}"
-      appendLn "\\usepackage{ogma}"
-      appendLn "\\sloppy"
-      appendLn $ "\\title{" ++ novelTitle n ++ "}"
-      appendLn $ "\\author{" ++ author n ++ "}"
-      appendLn "\\begin{document}"
-      appendLn "\\maketitle"
+      appendLn [st|\documentclass[b5paper,12pt]{memoir}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[urw-garamond]{mathdesign}
+\usepackage{ogma}
+\sloppy
+\title{#{novelTitle n}}
+\author{#{author n}}
+\begin{document}
+\maketitle|]
       novelify $ manuscript n
       append "\\end{document}"
 
-parseMd :: String -> String -> String
-parseMd file txt = case readMarkdown ropts txt of Right pdc -> writeLaTeX wopts pdc
-                                                  Left _    -> "error while compiling " ++ file
+parseMd :: Text
+        -> Text
+        -> Text
+parseMd file txt = case readMarkdown ropts (unpack txt) of Right pdc -> pack $ writeLaTeX wopts pdc
+                                                           Left _    -> [st|error while compiling #{file}|]
     where ropts :: ReaderOptions
           ropts = def
 
