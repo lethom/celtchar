@@ -1,35 +1,44 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 
 module Celtchar.Novel.Ogmarkup where
 
 import Text.Ogmarkup
+import Data.Text (Text, append)
+import Data.String
+import Text.Shakespeare.Text
 
 data NovConf = NovConf
 
-emptyLine :: String
-emptyLine = "\n\n"
+el :: Text
+el = "\n\n"
 
-instance GenConf NovConf String where
+blk :: Text
+    -> Text
+blk = (`append` el)
+
+instance GenConf NovConf Text where
     typography _ = frenchTypo
 
     printSpace _ None = ""
     printSpace _ Normal = " "
     printSpace _ Nbsp = "~"
 
-    betweenDialogue _ = emptyLine
+    betweenDialogue _ = el
 
-    storyTemplate _ sec = "\\paragraph{} " ++ sec ++ emptyLine
+    storyTemplate _ sec = blk [st|\paragraph{} #{sec}|]
 
-    paragraphTemplate _ = (++ emptyLine)
+    paragraphTemplate _ = blk
 
-    dialogueTemplate _ _ txt = "\\dialogue{}" ++ txt
-    thoughtTemplate _ _ txt = "\\thought{}" ++ txt
-    replyTemplate _ txt = "\\reply{" ++ txt ++ "}"
+    dialogueTemplate _ _ txt = [st|"\dialogue{}#{txt}|]
+    thoughtTemplate _ _ txt = [st|\thought{}#{txt}|]
+    replyTemplate _ txt = [st|\reply{#{txt}}|]
 
-    strongEmphTemplate _ txt = "\\textbf{" ++ txt ++ "}"
-    emphTemplate _ txt = "\\textit{" ++ txt ++ "}"
+    strongEmphTemplate _ txt = [st|"\textbf{#{txt}}"|]
+    emphTemplate _ txt = [st|"\textit{#{txt}}"|]
 
-parseDoc :: String -> String
-parseDoc doc = ogmarkup ByLine doc NovConf
+parseDoc :: Text -> Text
+parseDoc doc = ogmarkup doc NovConf
