@@ -1,5 +1,5 @@
 ------
-truc: machin
+foo: bar
 ------
 
-Ceci est un test
+This is a test
