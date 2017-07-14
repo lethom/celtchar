@@ -38,6 +38,7 @@ executable celtchar
   build-depends:       base
                      , optparse-generic
                      , text
+                     , file-embed
                      , celtchar
   default-language:    Haskell2010
 

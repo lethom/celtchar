@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Main where
 
@@ -30,12 +31,17 @@ main = do
     cmd <- getRecord "celtchar" :: IO Command
 
     let conf = root cmd
+
     h <- getOutputHandle $ output cmd
 
     f <- getNovelStructure $ conf
 
+    -- write the final tex file
     case f of Just x  -> do res <- stringify (language x) (novelify x)
                             T.hPutStr h res
               Nothing -> T.hPutStrLn stderr "error while parsing"
 
     hClose h
+
+    -- write the sty file
+    T.writeFile "ogma.sty" $(embedStringFile "ogma.sty")
