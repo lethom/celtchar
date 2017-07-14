@@ -1,7 +1,5 @@
 language: haskell
 
-sudo: false
-
 cache:
   directories:
     - $HOME/.stack
@@ -11,6 +9,8 @@ before_install:
   - export PATH=~/.local/bin:$PATH
   - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   - chmod a+x ~/.local/bin/stack
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq -y texlive texlive-lang-german  texlive-latex-recommended  texlive-latex-extra
 
 install:
   - stack setup
@@ -19,3 +19,5 @@ script:
   - stack build
   - stack test
   - stack haddock
+  - stack exec celtchar -- --root example/test.yaml --output example/out.tex
+  - pdflatex example/out.tex
