@@ -36,12 +36,12 @@ instance GenConf NovConf Text where
 
     paragraphTemplate _ = blk
 
-    dialogueTemplate _ _ txt = [st|"\dialogue{}#{txt}|]
+    dialogueTemplate _ _ txt = [st|\dialogue{}#{txt}|]
     thoughtTemplate _ _ txt = [st|\thought{}#{txt}|]
     replyTemplate _ txt = [st|\reply{#{txt}}|]
 
-    strongEmphTemplate _ txt = [st|"\textbf{#{txt}}"|]
-    emphTemplate _ txt = [st|"\textit{#{txt}}"|]
+    strongEmphTemplate _ txt = [st|\textbf{#{txt}}|]
+    emphTemplate _ txt = [st|\textit{#{txt}}|]
 
-parseDoc :: Text -> Text
-parseDoc doc = ogmarkup doc NovConf
+parseDoc :: Language -> Text -> Text
+parseDoc lang doc = ogmarkup doc $ NovConf lang
