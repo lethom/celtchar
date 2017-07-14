@@ -34,7 +34,7 @@ main = do
 
     f <- getNovelStructure $ conf
 
-    case f of Just x  -> do res <- stringify (novelify x)
+    case f of Just x  -> do res <- stringify (language x) (novelify x)
                             T.hPutStr h res
               Nothing -> T.hPutStrLn stderr "error while parsing"
 

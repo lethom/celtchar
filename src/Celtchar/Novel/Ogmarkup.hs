@@ -11,7 +11,9 @@ import Data.Text (Text, append)
 import Data.String
 import Text.Shakespeare.Text
 
-data NovConf = NovConf
+import Celtchar.Novel.Structure (Language(..))
+
+data NovConf = NovConf Language
 
 el :: Text
 el = "\n\n"
@@ -21,7 +23,8 @@ blk :: Text
 blk = (`append` el)
 
 instance GenConf NovConf Text where
-    typography _ = frenchTypo
+    typography (NovConf French) = frenchTypo
+    typography (NovConf English) = englishTypo
 
     printSpace _ None = ""
     printSpace _ Normal = " "

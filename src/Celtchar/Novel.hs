@@ -8,6 +8,7 @@
 module Celtchar.Novel where
 
 import           Control.Monad.State.Strict
+import           Control.Monad.Reader
 import           Data.Default
 import           Data.String
 import           Data.Maybe
@@ -24,7 +25,10 @@ import           Celtchar.Metadata
 import           Celtchar.Novel.Ogmarkup
 import           Celtchar.Novel.Structure
 
-type Builder = StateT Text IO
+type Builder = StateT Text (ReaderT Language IO)
+
+getLanguage :: Builder Language
+getLanguage = lift $ ask
 
 append :: Text -> Builder ()
 append str = do st <- get
@@ -34,8 +38,8 @@ appendLn :: Text -> Builder ()
 appendLn str = do append str
                   append "\n"
 
-stringify :: Builder () -> IO Text
-stringify builder = execStateT builder ""
+stringify :: Language -> Builder () -> IO Text
+stringify lang builder = runReaderT (execStateT builder "") lang
 
 class Novelify a where
     novelify :: a -> Builder ()
@@ -47,10 +51,11 @@ instance (Novelify a) => Novelify [a] where
 
 instance Novelify Document where
     novelify (Document path) = do
+      lang <- getLanguage
       f <- liftIO $ T.readFile path
       case parseMetadata path f of
         Right (metadata :: Maybe Text, txt) -> appendLn $ case takeExtension path of
-                                                            ".up"  -> parseDoc txt
+                                                            ".up"  -> parseDoc lang txt
                                                             ".tex" -> txt
                                                             ".md"  -> parseMd f txt
                                                             _      -> verbatim txt
@@ -78,7 +83,7 @@ instance Novelify Manuscript where
 instance Novelify Novel where
     novelify n = do
       appendLn [st|\documentclass[b5paper,12pt]{memoir}
-\usepackage[french]{babel}
+\usepackage[#{show $ language n}]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[urw-garamond]{mathdesign}

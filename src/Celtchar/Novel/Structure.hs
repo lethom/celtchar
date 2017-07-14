@@ -8,6 +8,9 @@ module Celtchar.Novel.Structure where
 import Data.Yaml
 import GHC.Generics
 
+data Language = French | English
+  deriving (Generic)
+
 data Document = Document FilePath
   deriving (Generic, Show)
 
@@ -36,12 +39,24 @@ data Manuscript = Manuscript [Part]
 instance FromJSON Manuscript where
     parseJSON v = Manuscript <$> parseJSON v
 
-data Novel = Novel { author :: String
+instance FromJSON Language where
+    parseJSON (String "english") = pure English
+    parseJSON (String "french")  = pure French
+    parseJSON _                  = fail "unknown language"
+
+instance Show Language where
+    show English = "english"
+    show French  = "french"
+
+data Novel = Novel { author     :: String
+                   , language   :: Language
                    , novelTitle :: String
                    , manuscript :: Manuscript }
   deriving (Generic, Show)
+
 instance FromJSON Novel where
     parseJSON (Object v) = Novel <$> v .: "author"
+                                 <*> v .: "language"
                                  <*> v .: "title"
                                  <*> v .: "manuscript"
 
