@@ -7,22 +7,35 @@ module Main where
 
 import Options.Generic
 import Data.Text (unpack)
+import System.IO (stderr, stdout, Handle, IOMode(..), openFile, hClose)
 import qualified Data.Text.IO as T
 
 import Celtchar.Novel.Structure
 import Celtchar.Novel
 
 data Command =
-    Command { root :: FilePath }
+    Command { root   :: FilePath
+            , output :: Maybe FilePath
+            }
   deriving (Generic, Show)
 
 instance ParseRecord Command
 
+getOutputHandle :: Maybe FilePath -> IO Handle
+getOutputHandle Nothing = pure stdout
+getOutputHandle (Just target) = openFile target WriteMode
+
 main :: IO ()
 main = do
-    cmd <- getRecord "ogma-cli" :: IO Command
+    cmd <- getRecord "celtchar" :: IO Command
 
-    f <- getNovelStructure $ root cmd
+    let conf = root cmd
+    h <- getOutputHandle $ output cmd
+
+    f <- getNovelStructure $ conf
+
     case f of Just x  -> do res <- stringify (novelify x)
-                            T.putStrLn $ res
-              Nothing -> T.putStrLn "error while parsing"
+                            T.hPutStr h res
+              Nothing -> T.hPutStrLn stderr "error while parsing"
+
+    hClose h
