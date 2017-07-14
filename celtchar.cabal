@@ -39,6 +39,8 @@ executable celtchar
                      , optparse-generic
                      , text
                      , file-embed
+                     , filepath
+                     , directory
                      , celtchar
   default-language:    Haskell2010
 
