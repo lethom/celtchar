@@ -9,7 +9,6 @@ module Celtchar.Novel where
 
 import           Control.Monad.State.Strict
 import           Control.Monad.Reader
-import           Data.Default
 import           Data.String
 import           Data.Maybe
 import           Data.Text (Text, pack, unpack)
