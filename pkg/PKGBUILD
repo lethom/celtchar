@@ -1,0 +1,23 @@
+pkgbase=celtchar
+pkgname=$pkgbase-git
+pkgver=0.1.0.0
+pkgrel=1
+pkgdesc="A tool to build a novel"
+arch=('x86_64')
+url="https://github.com/ogma-project/celtchar"
+license=("MIT")
+makedepends=('stack')
+source=("git+https://github.com/ogma-project/celtchar")
+md5sums=('SKIP')
+
+build () {
+  cd "$srcdir/$pkgbase"
+  git checkout "$pkgbase"-"$pkgver"
+  stack build --ghc-options -O2
+}
+
+package () {
+  cd "$srcdir/$pkgbase"
+  mkdir -p "$pkgdir"/usr/bin
+  sudo install $(find .stack-work/install -name celtchar) "$pkgdir"/usr/bin
+}
