@@ -51,7 +51,7 @@ main = do
                 T.hPutStr h res
                 hClose h
 
-                T.writeFile (outDir </> "ogma.sty") $(embedStringFile "ogma.sty")
+                T.writeFile (outDir </> "ogma.sty") $(embedStringFile "assets/ogma.sty")
               Left err -> do
                 hPutStrLn stderr err
                 exitFailure

@@ -10,7 +10,7 @@ maintainer:          contact@thomasletan.fr
 copyright:           2016 Thomas Letan
 category:            Text
 build-type:          Simple
-extra-source-files:  ogma.sty
+extra-source-files:  assets/ogma.sty
 cabal-version:       >=1.10
 
 library
