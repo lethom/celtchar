@@ -10,10 +10,8 @@ module Celtchar.Novel where
 import           Control.Monad.State.Strict
 import           Control.Monad.Reader
 import           Data.String
-import           Data.Maybe
 import           Data.Text (Text, pack, unpack)
 import qualified Data.Text.IO as T
-import           Data.Monoid
 import           System.FilePath
 import           Text.Pandoc.Options
 import           Text.Pandoc.Readers.Markdown
@@ -91,9 +89,23 @@ instance Novelify Novel where
 \title{#{novelTitle n}}
 \author{#{author n}}
 \begin{document}
+\frontmatter
 \maketitle|]
+      putFrontmatter $ frontmatter n
       novelify $ manuscript n
+      putAppendix $ appendix n
       append "\\end{document}"
+       where
+         putFrontmatter Nothing =
+           appendLn "% No frontmatter field in configuration file"
+         putFrontmatter (Just fm) =
+           novelify fm
+
+         putAppendix Nothing =
+           appendLn "% No appendix field in configuration file"
+         putAppendix (Just app) =
+           novelify app
+
 
 parseMd :: Text
         -> Text

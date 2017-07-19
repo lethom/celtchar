@@ -1,6 +1,7 @@
 author: lthms
 language: english
 title: "Foobar"
+frontmatter:
 manuscript:
 - title: "foo"
   chapters:
@@ -12,3 +13,4 @@ manuscript:
     - test.tex
     - test.txt
     - test.md
+appendix:
