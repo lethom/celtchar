@@ -60,5 +60,11 @@ instance FromJSON Novel where
                                  <*> v .: "title"
                                  <*> v .: "manuscript"
 
-getNovelStructure :: FilePath -> IO (Maybe Novel)
-getNovelStructure = decodeFile
+getNovelStructure :: FilePath -> IO (Either String Novel)
+getNovelStructure conf = do
+  ec <- decodeFileEither conf
+  case ec of
+    Right novel ->
+      pure (Right novel)
+    Left ex -> do
+      pure (Left $ prettyPrintParseException ex)
