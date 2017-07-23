@@ -61,9 +61,9 @@ instance FromJSON Novel where
     parseJSON (Object v) = Novel <$> v .: "author"
                                  <*> v .: "language"
                                  <*> v .: "title"
-                                 <*> v .: "frontmatter"
+                                 <*> v .:? "frontmatter"
                                  <*> v .: "manuscript"
-                                 <*> v .: "appendix"
+                                 <*> v .:? "appendix"
 
 getNovelStructure :: FilePath -> IO (Either String Novel)
 getNovelStructure conf = do
